@@ -5,6 +5,7 @@ import game_functions as gf
 from pygame.sprite import Group
 from game_stats import GameStats #Game_stats class from game_stats module
 from button import Button
+from scoreboard import Scoreboard
 
 def run_game():
     #initialize game create a screen object
@@ -13,11 +14,12 @@ def run_game():
     screen = pygame.display.set_mode((ai_settings.screen_width, ai_settings.screen_height))
     pygame.display.set_caption("Alien Invasion")
 
-    #Mkae the play button
+    #Make the play button
     play_button = Button(ai_settings, screen, "Play")
 
-    #Create an instance to store gam statistics
+    #Create an instance to store gam statistics and create a scoreboard
     stats = GameStats(ai_settings)
+    sb = Scoreboard(ai_settings, screen, stats)
 
     # Make ship group of bullets and group of aliens
     ship = Ship(ai_settings,screen)
@@ -30,12 +32,12 @@ def run_game():
     #Game Loop
     while True:
         # Watch for keyboard and mouse events
-        gf.check_events(ai_settings, screen, stats, play_button, ship, aliens, bullets)
+        gf.check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bullets)
         if stats.game_active:
             ship.update()
-            gf.update_bullets(ai_settings, screen, ship, aliens, bullets)
-            gf.update_aliens(ai_settings,stats, screen, ship, aliens, bullets)
-        gf.update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button)
+            gf.update_bullets(ai_settings, screen, stats, sb,   ship, aliens, bullets)
+            gf.update_aliens(ai_settings,screen, stats, sb, ship, aliens, bullets)
+        gf.update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_button)
         
         
 run_game() 
