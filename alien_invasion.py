@@ -17,9 +17,10 @@ def run_game():
     #Make the play button
     play_button = Button(ai_settings, screen, "Play")
 
-    #Create an instance to store gam statistics and create a scoreboard
+    #Create an instance to store game statistics and create a scoreboard
     stats = GameStats(ai_settings)
     sb = Scoreboard(ai_settings, screen, stats)
+    gf.load_stats(stats)  # Load saved stats if available
 
     # Make ship group of bullets and group of aliens
     ship = Ship(ai_settings,screen)

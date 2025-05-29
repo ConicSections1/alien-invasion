@@ -3,6 +3,7 @@ import pygame
 from bullet import Bullet
 from alien import Alien
 from time import sleep
+import json
 
 def ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets):
     '''Respond to the ship being hit by an alien'''
@@ -77,6 +78,10 @@ def check_events(ai_settings, screen, stats, sb, play_button, ship, aliens, bull
     '''Respond to keypresses and mouse events'''
     for event in pygame.event.get():
         if event.type ==pygame.QUIT:
+            stats.reset_stats()
+            ai_settings.initialize_dynamic_settings()
+            save_stats(stats)
+            pygame.quit()
             sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -138,12 +143,12 @@ def update_screen(ai_settings, screen, stats, sb, ship, aliens, bullets, play_bu
 
 def check_keydown_events(event, ai_settings, screen, ship, bullets):
     '''Respond to presses'''
-    if event.key == pygame.K_RIGHT:
+    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
         #Move the ship to the right
         ship.moving_right = True
 
     #Move the ship to the left
-    elif event.key == pygame.K_LEFT:
+    elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
         ship.moving_left = True
     
     elif event.key == pygame.K_SPACE:
@@ -154,10 +159,12 @@ def check_keydown_events(event, ai_settings, screen, ship, bullets):
 
 def check_keyup_events(event,ship):
     '''Respond to key releases'''
-    if event.key == pygame.K_RIGHT:
+    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+        #Stop moving the ship to the right
         ship.moving_right = False
 
-    elif event.key == pygame.K_LEFT:
+    elif event.key == pygame.K_LEFT or event.key == pygame.K_a:
+        #Stop moving the ship to the left
         ship.moving_left = False
 
 def update_bullets(ai_settings, screen, stats, sb, ship, aliens, bullets):
@@ -220,6 +227,22 @@ def check_high_score(stats, sb):
     if stats.score>stats.high_score:
         stats.high_score = stats.score
         sb.prep_high_score()
+
+def save_stats(stats):
+    '''Save the stats to a file'''
+    with open('high_score.json', 'w') as f:
+        json.dump(stats.high_score, f)
+
+def load_stats(stats):
+    '''Load the stats from a file'''
+    try:
+        with open('high_score.json', 'r') as f:
+            stats.high_score = json.load(f)
+    except FileNotFoundError:
+        stats.high_score = 0
+    except json.JSONDecodeError:
+        stats.high_score = 0
+
 
 def check_aliens_bottom(ai_settings, screen, stats, sb, ship, aliens, bullets):
  
